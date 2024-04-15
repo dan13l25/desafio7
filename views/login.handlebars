@@ -1,5 +1,5 @@
   <h1>Login</h1>
-    <form action="/api/users/login" method="POST">
+    <form action="/api/users/login" method="POST" id="loginForm">
         <label for="email">Email</label><br>
         <input type="email" id="email" name="email" required><br>
         <label for="password">Contraseña</label><br>
@@ -7,3 +7,5 @@
         <button type="submit">Login</button>
     </form>
     <p>No tienes una cuenta? <a href="http://localhost:8080/api/users/register">Registro</a></p>
+
+<script src="/js/login.js"></script>

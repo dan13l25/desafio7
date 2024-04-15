@@ -72,6 +72,7 @@ const userManager = {
                 role,
             });
 
+            console.log(newUser)
             await newUser.save();
 
             res.cookie("user_id", newUser._id, { maxAge: 100000, httpOnly: true });

@@ -3,7 +3,7 @@ import userManager from "../dao/manager/userManager.js";
 
 const userRouter = express.Router();
 
-userRouter.get("/login", userManager.getLogin);
+userRouter.get("/login" , userManager.getLogin);
 userRouter.post("/login", userManager.login);
 userRouter.get("/register", userManager.getRegister);
 userRouter.post("/register", userManager.register);

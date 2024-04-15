@@ -15,7 +15,6 @@ const app = express();
 const port = process.env.PORT || 8080;
 const server = app.listen(port, () => console.log("Servidor operando en puerto", port));
 
-// Definición de DB_URL
 const DB_URL = "mongodb+srv://dan13l:dani06011998@cluster0.pm7efvk.mongodb.net/ecommerce";
 
 app.use(express.urlencoded({ extended: true }));
@@ -26,7 +25,6 @@ app.set("views", __dirname + "/views");
 app.use(express.static(__dirname + "/public"));
 app.use(cookieParser());
 
-// Configuración de la sesión
 app.use(
   session({
     store: new MongoStore({
@@ -43,7 +41,7 @@ app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
 app.use("/api/users", userRouter);
 
-app.get("/", (req, res) => {
+app.get("/login", (req, res) => {
   res.render("login");
 });
 
@@ -55,14 +53,13 @@ app.get("/product", (req, res) => {
   res.render("product");
 });
 
-app.get("/home", (req, res) => {
+app.get("/", (req, res) => {
   res.render("home");
 });
 app.get("/register", (req, res) => {
     res.render("register");
   });
 
-// Conexión a la base de datos
 const connectMongoDB = async () => {
   try {
     await mongoose.connect(DB_URL);
