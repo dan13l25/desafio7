@@ -1,5 +1,6 @@
 import userModel from "../models/users.js";
 import bcrypt from "bcrypt";
+import { createHash } from "../../utils.js";
 
 
 const userManager = {
@@ -28,6 +29,10 @@ const userManager = {
                 user.role = "admin";
             }
 
+            res.locals.username = user.username;
+            console.log("Nombre de usuario:", res.locals.username)
+            req.session.username = user.username;
+
             res.cookie("user_id", user._id, { maxAge: 100000, httpOnly: true });
 
             req.session.userId = user._id;
@@ -36,7 +41,7 @@ const userManager = {
 
             req.session.isAuthenticated = true;
 
-            res.redirect("/chat");
+            res.redirect("/chat",);
 
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
@@ -101,6 +106,25 @@ const userManager = {
             console.error("Error al cerrar sesión:", error);
             res.status(500).json({ error: "Error interno del servidor" });
         }
+    },
+
+    getRestore: async (req, res) => {
+        res.render("restore");
+    },
+    restore: async (req,res) =>{
+
+        const { email, password } = req.body;
+        const user = await userModel.findOne({ email });
+        console.log(user);
+        if (!user)
+            return res
+            .status(400)
+            .send({ status: "error", message: "No se encuentra el user" });
+        const newPass = createHash(password);
+
+        await userModel.updateOne({ _id: user._id }, { $set: { password: newPass } });
+
+        res.send({ status: "success", message: "Password actualizado" });
     }
 }
 

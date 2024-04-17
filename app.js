@@ -56,9 +56,7 @@ app.get("/product", (req, res) => {
 app.get("/", (req, res) => {
   res.render("home");
 });
-app.get("/register", (req, res) => {
-    res.render("register");
-  });
+
 
 const connectMongoDB = async () => {
   try {

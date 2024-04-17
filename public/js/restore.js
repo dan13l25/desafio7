@@ -1,4 +1,4 @@
-const form = document.getElementById("loginForm");
+const form = document.getElementById("restoreForm");
 
 form.addEventListener("submit", (e) => {
 
@@ -7,7 +7,7 @@ form.addEventListener("submit", (e) => {
   const obj = {};
   data.forEach((value, key) => (obj[key] = value));
   
-  fetch("/api/users/login", {
+  fetch("/api/users/restore", {
     method: "POST",
     body: JSON.stringify(obj),
     headers: {
@@ -15,8 +15,7 @@ form.addEventListener("submit", (e) => {
     },
   }).then((response) => {
     if (response.status === 200) {
-        localStorage.setItem('username', obj.username);
-        window.location.replace("/chat");
+        console.log("contraseña cambiada")
     } else {
       console.log("algo salio mal");
     }
