@@ -122,55 +122,29 @@ const userManager = {
         await userModel.updateOne({ _id: user._id }, { $set: { password: newPass } });
 
         res.send({ status: "success", message: "Password actualizado" });
-    }
+    },
+
+    getGitHub: passport.authenticate("github", { scope: ["user:email"] }),
+
+    gitHubCallback: passport.authenticate("github", { failureRedirect: "/login" }),
+
+    // Redirige al usuario a la página de inicio después de iniciar sesión con GitHub
+    handleGitHubCallback: async (req, res) => {
+        const token = auth.generateAuthToken(req.user);
+
+        // Establecer la cookie jwt con el token
+        res.cookie("jwt", token, { httpOnly: true });
+
+        // Establecer la sesión del usuario
+        req.session.userId = req.user._id;
+        req.session.user = req.user;
+        req.session.isAuthenticated = true;
+
+        // Redirigir al usuario a una página después de la autenticación exitosa
+        res.redirect("/api/products");
+    },
+
 }
 
 export default userManager;
 
-
-
-
-
-//register sin passport
-/*register: async (req, res, next) => {
-    const { first_name, last_name, email, age, password, username } = req.body;
-
-    try {
-        const existingUser = await userModel.findOne({ email });
-
-        if (existingUser) {
-            return res.status(400).json({ error: "El usuario ya existe" });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const role = email === "adminCoder@coder.com" ? "admin" : "user";
-
-        const newUser = new userModel({
-            first_name: first_name,
-            last_name: last_name,
-            email: email,
-            age: age,
-            username: username,
-            password: hashedPassword,
-            role,
-        });
-
-        console.log(newUser)
-        await newUser.save();
-
-        res.cookie("user_id", newUser._id, { maxAge: 100000, httpOnly: true });
-
-        req.session.userId = newUser._id;
-
-        req.session.user = newUser;
-
-        req.session.isAuthenticated = true;
-
-        return res.redirect("/api/products");
-
-    } catch (error) {
-        console.error("Error al registrar usuario:", error);
-        next(error);
-    }
-},*/
