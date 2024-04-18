@@ -41,17 +41,16 @@ userRouter.get(
   "/github",
   passport.authenticate("github", { scope: ["user:email"] }),
   async (req, res) => {
-    //podemos enviar una respuesta
   }
 );
-//ruta que nos lleva a github login
+
 userRouter.get(
   "/githubcallback",
   passport.authenticate("github", { failureRedirect: "/login" }),
   async (req, res) => {
     req.session.user = req.user;
    
-    res.redirect("/"); //ruta a la que redirigimos luego de iniciar sesión
+    res.redirect("/chat"); 
   }
 );
 

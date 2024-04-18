@@ -124,25 +124,7 @@ const userManager = {
         res.send({ status: "success", message: "Password actualizado" });
     },
 
-    getGitHub: passport.authenticate("github", { scope: ["user:email"] }),
-
-    gitHubCallback: passport.authenticate("github", { failureRedirect: "/login" }),
-
-    // Redirige al usuario a la página de inicio después de iniciar sesión con GitHub
-    handleGitHubCallback: async (req, res) => {
-        const token = auth.generateAuthToken(req.user);
-
-        // Establecer la cookie jwt con el token
-        res.cookie("jwt", token, { httpOnly: true });
-
-        // Establecer la sesión del usuario
-        req.session.userId = req.user._id;
-        req.session.user = req.user;
-        req.session.isAuthenticated = true;
-
-        // Redirigir al usuario a una página después de la autenticación exitosa
-        res.redirect("/api/products");
-    },
+    
 
 }
 
