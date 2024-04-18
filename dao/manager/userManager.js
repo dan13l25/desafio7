@@ -1,6 +1,7 @@
 import userModel from "../models/users.js";
 import bcrypt from "bcrypt";
-import { createHash } from "../../utils.js";
+import { createHash, isValidPassword } from "../../utils.js";
+import passport from "passport";
 
 
 const userManager = {
@@ -19,7 +20,7 @@ const userManager = {
                 return res.status(401).json({ error: "Credenciales invalidas" });
             }
 
-            const validPassword = await bcrypt.compare(password, user.password);
+            const validPassword = isValidPassword (user, password)
 
             if (!validPassword) {
                 return res.status(401).json({ error: "Credenciales invalidas" });
@@ -80,14 +81,10 @@ const userManager = {
             console.log(newUser)
             await newUser.save();
 
-            res.cookie("user_id", newUser._id, { maxAge: 100000, httpOnly: true });
-
-            req.session.userId = newUser._id;
-
-            req.session.user = newUser;
-
-            req.session.isAuthenticated = true;
-
+            passport.authenticate("register")(req, res, () => {
+                // Redirigir o enviar respuesta después de registrar y autenticar al usuario
+                return res.status(201).send({ status: "success", message: "Usuario registrado" });
+            });
             return res.redirect("/api/products");
 
         } catch (error) {
@@ -129,3 +126,51 @@ const userManager = {
 }
 
 export default userManager;
+
+
+
+
+
+//register sin passport
+/*register: async (req, res, next) => {
+    const { first_name, last_name, email, age, password, username } = req.body;
+
+    try {
+        const existingUser = await userModel.findOne({ email });
+
+        if (existingUser) {
+            return res.status(400).json({ error: "El usuario ya existe" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const role = email === "adminCoder@coder.com" ? "admin" : "user";
+
+        const newUser = new userModel({
+            first_name: first_name,
+            last_name: last_name,
+            email: email,
+            age: age,
+            username: username,
+            password: hashedPassword,
+            role,
+        });
+
+        console.log(newUser)
+        await newUser.save();
+
+        res.cookie("user_id", newUser._id, { maxAge: 100000, httpOnly: true });
+
+        req.session.userId = newUser._id;
+
+        req.session.user = newUser;
+
+        req.session.isAuthenticated = true;
+
+        return res.redirect("/api/products");
+
+    } catch (error) {
+        console.error("Error al registrar usuario:", error);
+        next(error);
+    }
+},*/

@@ -1,30 +1,21 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const registerForm = document.getElementById('registerForm');
+const form = document.getElementById("registerForm");
 
-    if (registerForm) {
-        registerForm.addEventListener('submit', function (event) {
-            event.preventDefault();
+form.addEventListener("submit", (e) => {
 
-            const formData = new FormData(registerForm);
-            const errorMessage = document.getElementById('errorMessage');
-
-            fetch('http://localhost:8080/api/users/register', {
-                method: 'POST',
-                body: formData,
-            })
-                .then(response => {
-                    if (response.ok) {
-                        // Si la respuesta es exitosa, redirigir al usuario al inicio
-                        console.log("Registro de usuario exitoso!")
-                    } else {
-                        // Si la respuesta no es exitosa, mostrar un mensaje de error
-                        errorMessage.textContent = 'Este email ya tiene cuenta.';
-                        errorMessage.style.display = 'block';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error en el registro:', error);
-                });
-        });
-    }
+  e.preventDefault();
+  const data = new FormData(form);
+  const obj = {};
+  data.forEach((value, key) => (obj[key] = value));
+  
+  fetch("/api/users/register", {
+    method: "POST",
+    body: JSON.stringify(obj),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .then((json) => {
+      console.log(json);
+    });
 });

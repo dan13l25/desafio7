@@ -10,6 +10,8 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import userRouter from "./routes/userRouter.js";
 import MongoStore from "connect-mongo";
+import passport from "passport";
+import initializePassport from "./config/passportConfig.js";
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -17,6 +19,8 @@ const server = app.listen(port, () => console.log("Servidor operando en puerto",
 
 const DB_URL = "mongodb+srv://dan13l:dani06011998@cluster0.pm7efvk.mongodb.net/ecommerce";
 
+
+//middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.engine("handlebars", handlebars.engine());
@@ -37,9 +41,14 @@ app.use(
   })
 );
 
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
+
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
 app.use("/api/users", userRouter);
+
 
 app.get("/login", (req, res) => {
   res.render("login");
@@ -86,3 +95,5 @@ io.on("connection", (socket) => {
     }
   });
 });
+
+export default app  
